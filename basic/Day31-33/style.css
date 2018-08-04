@@ -1,0 +1,54 @@
+* {
+	box-sizing: border-box;
+}
+.container {
+	width: 70%;
+	margin: 0 auto;
+}
+.select p {
+	display: inline-block;
+	width: 50px;
+}
+.select-item {
+	display: inline-block;
+}
+.select-item label {
+	padding: 5px 10px;
+	border-radius: 10px;
+}
+.not-choose {
+/*	background-color: grey;*/
+}
+.choose {
+	background-color: #5b7da3;
+	color: #fff;
+}
+
+#table-wrapper {
+	padding: 20px 0;
+}
+#table-wrapper table {
+	border-collapse:collapse;
+	border-bottom: solid 1px #a8bfde;
+}
+.head,
+.normal {
+	border-top: solid 1px #a8bfde;
+	font-family: Verdana;
+	color: #5b7da3;
+}
+.normal th {
+	padding: 8px 10px;
+	border-right: solid 1px #a8bfde;
+}
+.head th,
+.normal td {
+	padding: 5px;
+}
+.focus-tr {
+	background-color: #5b7da3;
+	color: #fff;
+}
+svg {
+	width: 50%;
+}

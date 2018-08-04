@@ -1,10 +1,9 @@
 	var regionSelect = document.querySelector('#region-select');
 	var productSelect = document.querySelector('#product-select');
-	var showItems = document.querySelector('#show-items');
-
-	showItems.onclick = function() {
-		updateTable(getItem());
-	}
+	
+//	showItems.onclick = function() {
+		updateTable();
+	//}
 
 	genCheckBox(regionSelect, [{
 		value: "华东",
@@ -27,3 +26,6 @@
 		value: "智能音箱",
 		text: "智能音箱"
 	}]);
+
+	lineChart.clearLine();
+	barChart.clearLine();

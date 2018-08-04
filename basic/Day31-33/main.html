@@ -3,35 +3,34 @@
 <head>
 	<meta charset="UTF-8">
 	<title>我是精明的小卖家</title>
-	
-	<style>
-	#region-select,
-	#product-select {
-		padding: 0 20px;
-	}
-	.select {
-		display: inline-block;
-		width: 350px;
-		padding: 5px;
-		border: solid 1px;
-	}
-	input[type='button'] {
-		margin: 20px 10px;
-	}
-	</style>
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<div class="select">
-		<span>地区：</span><div id="region-select"></div>
-		<span>产品：</span><div id="product-select"></div>
+	<div class="container">
+		<div class="select">
+			<section>
+				<p>地区：</p><div class="select-item" id="region-select"></div>
+			</section>
+			<section>
+				<p>产品：</p><div class="select-item" id="product-select"></div>
+			</section>
+		</div>
+	
+		<div id="table-wrapper">
+		</div>
+
+		<div id="chart">
+			<svg version="1.1" width="300" height="300" id="barChart"></svg>
+			<canvas width="300" height="300" id="lineChart"></canvas>
+		</div>
 	</div>
-	<input type="button" value="筛选" id="show-items">
-	<div id="table-wrapper">
-	</div>
+	
 
  	<script type="text/javascript" src = "src/ife31data.js"></script>
 	<script type="text/javascript" src = "src/checkbox.js"></script>
 	<script type="text/javascript" src = "src/table.js"></script> 
+	 <script type="text/javascript" src = "src/bar.js"></script>
+	<script type="text/javascript" src = "src/line.js"></script>
 	<script type="text/javascript" src = "src/index.js"></script>
 	<!-- <script src = "dist/bundle.js"></script> -->
 </body>

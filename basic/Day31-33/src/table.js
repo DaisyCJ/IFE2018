@@ -9,16 +9,15 @@
 		}
 		return items;
 	}
-	function updateTable(items) {
-		console.log(items);
+	function updateTable() {
+		var items = getItem();
 		var data = "";
 		table.innerHTML = "";
 		//添加表头
 		if(getRegionsChoose().length==1 && getProductsChoose().length>1) {
-			data += "<table border = '1px'><thead><tr><th>地区</th><th>商品</th>";
-			console.log('region');
+			data += "<table><thead><tr class='head'><th>地区</th><th>商品</th>";
 		}
-		else data += "<table border = '1px'><thead><tr><th>商品</th><th>地区</th>";
+		else data += "<table><thead><tr class='head'><th>商品</th><th>地区</th>";
 		for(var i=1; i<=12; i++) {
 			data += "<th>" + i + "月</th>";
 		}
@@ -29,21 +28,21 @@
 		//当前商品名
 		var product;
 		for(var i=0; i<items.length; i++) {
-			data += "<tr>"
+			data += "<tr class='normal'>"
 			var tr = [];
 			//添加商品
 			if(product != items[i].product) {
 				product = items[i].product;
-				tr.push("<td rowspan='"+getLength(product)+"'>" + items[i].product + "</td>");
+				tr.push("<th rowspan='"+getLength(product)+"'>" + items[i].product + "</th>");
 			}
 			//添加地区
 			if(getRegionsChoose().length==1 && getProductsChoose().length!=1){
 				if(i==0){
-					tr.push("<td rowspan='"+items.length+"'>" + items[i].region + "</td>");
+					tr.push("<th rowspan='"+items.length+"'>" + items[i].region + "</th>");
 					tr.reverse();
 				}
 			} else {
-				tr.push("<td>" + items[i].region + "</td>");
+				tr.push("<th>" + items[i].region + "</th>");
 			}
 			//添加每月销售
 			for(var e of items[i].sale) {
@@ -76,4 +75,46 @@
 			if(products[i].product == product) num++;
 		}
 		return num;
+	}
+
+	table.onmouseover = function(e) {
+		var data = [];
+		var lastFocusTr = document.querySelectorAll(".focus-tr");
+		if(lastFocusTr) {
+			lastFocusTr.forEach((ele) => {
+				ele.setAttribute("class", "normal");
+			});
+		}
+		if(e.target.nodeName.toLowerCase() == "td" && e.target.parentNode.getAttribute("class")=="normal") {
+		//	e.target.parentNode.setAttribute("class", "focus-tr");
+			var tds = e.target.parentNode.getElementsByTagName("td");
+		//	var begin = tds.length==13? 1:2;
+			for(var i=0; i<tds.length; i++) {
+				data.push(Number(tds[i].textContent));
+				tds[i].setAttribute("class", "focus-tr");
+			}
+			lineChart.clearLine();
+			lineChart.initData([data]);
+			lineChart.drawChart();
+
+			barChart.clearLine();
+			barChart.initData(data);
+			barChart.drawChart();
+		}
+	}
+	table.onmouseout = function(e) {
+		var lists = table.getElementsByTagName("tr");
+		var datas = [];
+		for(var i=1; i<lists.length; i++) {
+			var data = [];
+			var tds = lists[i].getElementsByTagName("td");
+		//	var begin = tds.length==13? 1:2;
+			for(var j=0; j<tds.length; j++) {
+				data.push(Number(tds[j].textContent));
+			}
+			datas.push(data);
+		}
+		lineChart.clearLine();
+		lineChart.initData(datas);
+		lineChart.drawChart();
 	}

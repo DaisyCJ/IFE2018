@@ -1,16 +1,31 @@
  	function genCheckBox(select, items) {
-		select.innerHTML += "<input type='checkbox' checkbox-type='all' value='all'>全选";
-		for(var e of items) {
-			var item = document.createElement('input');
-			var text = document.createTextNode(e.text);
-			item.value = e.value;
-			item.setAttribute("checkbox-type", "item");
-			item.setAttribute("type", "checkbox");
-			select.appendChild(item);
+		select.innerHTML += "<label for='" +select.id+ "all'>全部</label>"+
+		"<input type='checkbox' style='visibility: hidden' checkbox-type='all' value='all' id='" +select.id+ "all'>";
+		// for(var e of items) {
+		// 	var item = document.createElement("input");
+		// 	var text = document.createTextNode(e.text);
+		// 	item.value = e.value;
+		// 	item.setAttribute("checkbox-type", "item");
+		// 	item.setAttribute("type", "checkbox");
+		// 	select.appendChild(item);
+		// 	select.appendChild(text);
+		// }
+		for(var i=0; i<items.length; i++) {
+			var checkbox = document.createElement("input");
+		 	var text = document.createElement("label");
+		 	checkbox.value = items[i].value;
+			checkbox.setAttribute("checkbox-type", "item");
+			checkbox.setAttribute("type", "checkbox");
+			checkbox.setAttribute("id", select.id+i);
+			text.setAttribute("for", select.id+i);
+			text.innerHTML = items[i].text;
 			select.appendChild(text);
+			select.appendChild(checkbox);
+			checkbox.style.cssText = "visibility: hidden";
 		}
-		select.onchange = function(e) {
+		select.onclick = function(e) {
 			if(e.target.type == "checkbox") {
+				var checkboxs = document.querySelectorAll("#"+select.id+" [type='checkbox']");
 				var type = e.target.getAttribute("checkbox-type");
 				if(type == "all") {
 					for(var ele of select.childNodes) {
@@ -18,11 +33,19 @@
 					}
 				}
 				else {
-					select.firstChild.checked = false;
 					var checkNum = document.querySelectorAll("#"+select.id+" [checkbox-type='item']:checked");
+					checkboxs[0].checked = false;
 					if(checkNum.length==0) e.target.checked = true;
-					if(checkNum.length==3) select.firstChild.checked = true;
+					if(checkNum.length==3) checkboxs[0].checked = true;
 				}
+				for(var i=0; i<checkboxs.length; i++) {
+					if(checkboxs[i].checked) {
+						checkboxs[i].previousSibling.setAttribute("class", "choose");
+					} else{
+						checkboxs[i].previousSibling.setAttribute("class", "not-choose");
+					}
+				}
+				updateTable();
 			}
 		}
 	}
