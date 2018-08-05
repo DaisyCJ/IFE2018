@@ -45,7 +45,7 @@
 						checkboxs[i].previousSibling.setAttribute("class", "not-choose");
 					}
 				}
-				updateTable();
+				updateTable(filterItems());
 			}
 		}
 	}

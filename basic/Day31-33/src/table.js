@@ -1,20 +1,12 @@
 	var table = document.querySelector('#table-wrapper');
-	function getItem() {
-		var items = [];
-		for(var e of sourceData) {
-			if(getRegionsChoose().indexOf(e.region)>=0 && 
-				getProductsChoose().indexOf(e.product)>=0) {
-				items.push(e);
-			}
-		}
-		return items;
-	}
-	function updateTable() {
-		var items = getItem();
+	
+	//更新表格中的数据
+	function updateTable(items) {
 		var data = "";
 		table.innerHTML = "";
+
 		//添加表头
-		if(getRegionsChoose().length==1 && getProductsChoose().length>1) {
+		if(getTypeNumber(items,"region")==1 && getTypeNumber(items,"product")>1) {
 			data += "<table><thead><tr class='head'><th>地区</th><th>商品</th>";
 		}
 		else data += "<table><thead><tr class='head'><th>商品</th><th>地区</th>";
@@ -30,13 +22,13 @@
 		for(var i=0; i<items.length; i++) {
 			data += "<tr class='normal'>"
 			var tr = [];
-			//添加商品
+			//添加商品，相同商品只显示一次
 			if(product != items[i].product) {
 				product = items[i].product;
-				tr.push("<th rowspan='"+getLength(product)+"'>" + items[i].product + "</th>");
+				tr.push("<th rowspan='"+getOneTypeNum(product, items)+"'>" + items[i].product + "</th>");
 			}
 			//添加地区
-			if(getRegionsChoose().length==1 && getProductsChoose().length!=1){
+			if(getTypeNumber(items,"region")==1 && getTypeNumber(items,"product")!=1){
 				if(i==0){
 					tr.push("<th rowspan='"+items.length+"'>" + items[i].region + "</th>");
 					tr.reverse();
@@ -46,39 +38,56 @@
 			}
 			//添加每月销售
 			for(var e of items[i].sale) {
-				tr.push("<td>" + e + "</td>");
+				tr.push("<td><input type='text' value='" + e + "'></td>");
 			}
 			data += tr.join("") + "</tr>";
 		}
 		data += "</tbody></table>";
 		table.innerHTML = data;
+		addInputListen();
 	}
 
-	function getRegionsChoose() {
-		var regions=[];
-		var region = document.querySelectorAll("#region-select [checkbox-type='item']:checked");
-		region.forEach(e => {regions.push(e.value);});
-		return regions;
-	}
-
-	function getProductsChoose() {
-		var products=[];
-		var product = document.querySelectorAll("#product-select [checkbox-type='item']:checked");
-		product.forEach(e => {products.push(e.value);});
-		return products;
-	}
-
-	function getLength(product) {
-		var num=0;
-		var products = getItem();
-		for(var i=0; i<products.length; i++) {
-			if(products[i].product == product) num++;
+	//获取表格的全部信息，返回列表（数组对象）
+	function getTableData() {
+		var items = filterItems();
+		//获取全部产品月销量
+		var lists = table.getElementsByTagName("tr");
+		var datas = [];
+		for(var i=1; i<lists.length; i++) {
+		 	datas.push(getYearData(lists[i]));
 		}
-		return num;
+		//更新每个产品月销量
+		items.forEach((ele, index) => {
+			ele.sale = datas[index];
+		})
+		return items;
 	}
 
-	table.onmouseover = function(e) {
+	//获取一个地区产品一年的销量（一行）
+	function getYearData(item) {
 		var data = [];
+		var tds = item.getElementsByTagName("td");
+		for(var j=0; j<tds.length; j++) {
+			data.push(Number(tds[j].firstChild.value));
+		}
+		return data;
+	}
+
+	//给每个输入框添加监听事件
+	function addInputListen() {
+		var inputs = document.querySelectorAll("td input");
+		inputs.forEach((ele) => {
+			ele.onblur = function() {
+				console.log('inputchange');
+				if(isNaN(ele.value)) {
+					alert("请正确输入");
+				}
+			}
+		});
+	}
+	//给鼠标选中行添加事件
+	table.onmouseover = function(e) {
+		//重置样式
 		var lastFocusTr = document.querySelectorAll(".focus-tr");
 		if(lastFocusTr) {
 			lastFocusTr.forEach((ele) => {
@@ -86,35 +95,31 @@
 			});
 		}
 		if(e.target.nodeName.toLowerCase() == "td" && e.target.parentNode.getAttribute("class")=="normal") {
-		//	e.target.parentNode.setAttribute("class", "focus-tr");
+			//给事件对象行添加新样式
 			var tds = e.target.parentNode.getElementsByTagName("td");
-		//	var begin = tds.length==13? 1:2;
 			for(var i=0; i<tds.length; i++) {
-				data.push(Number(tds[i].textContent));
-				tds[i].setAttribute("class", "focus-tr");
+			 	tds[i].setAttribute("class", "focus-tr");
 			}
+			//更新图表
 			lineChart.clearLine();
-			lineChart.initData([data]);
+			lineChart.initData([getYearData(e.target.parentNode)]);
 			lineChart.drawChart();
 
 			barChart.clearLine();
-			barChart.initData(data);
+			barChart.initData(getYearData(e.target.parentNode));
 			barChart.drawChart();
 		}
 	}
-	table.onmouseout = function(e) {
+	//鼠标移开表格，折线图显示全部数据
+	table.onmouseout = function() {
 		var lists = table.getElementsByTagName("tr");
 		var datas = [];
 		for(var i=1; i<lists.length; i++) {
-			var data = [];
-			var tds = lists[i].getElementsByTagName("td");
-		//	var begin = tds.length==13? 1:2;
-			for(var j=0; j<tds.length; j++) {
-				data.push(Number(tds[j].textContent));
-			}
-			datas.push(data);
+		 	datas.push(getYearData(lists[i]));
 		}
 		lineChart.clearLine();
 		lineChart.initData(datas);
 		lineChart.drawChart();
 	}
+
+

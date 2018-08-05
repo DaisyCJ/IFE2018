@@ -1,10 +1,21 @@
 	var regionSelect = document.querySelector('#region-select');
 	var productSelect = document.querySelector('#product-select');
-	
-//	showItems.onclick = function() {
-		updateTable();
-	//}
+	var saveBtn = document.querySelector('#save-data-btn');
 
+	//优先显示本地存储的数据，没有则根据筛选条件显示
+	var data = localStorage.data;
+	if(data) {
+		updateTable(JSON.parse(data));
+	} else {
+		updateTable(filterItems());
+	}
+
+	saveBtn.onclick = function() {
+		var value = getTableData();
+		localStorage.data = JSON.stringify(value);
+	}
+
+	//初始化checkbox
 	genCheckBox(regionSelect, [{
 		value: "华东",
 		text: "华东"
@@ -27,5 +38,5 @@
 		text: "智能音箱"
 	}]);
 
-	lineChart.clearLine();
-	barChart.clearLine();
+//	lineChart.clearLine();
+//	barChart.clearLine();

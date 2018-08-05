@@ -51,7 +51,7 @@ var lineChart = {
 		if(myCanvas.getContext) {
 			var ctx = myCanvas.getContext("2d");
 			ctx.beginPath();
-			strokeStyle = this.axisColor;
+			ctx.strokeStyle = this.axisColor;
 			ctx.moveTo(10, 10);
 			ctx.lineTo(10, 10+this.yWidth);
 			ctx.lineTo(10+this.xWidth, 10+this.yWidth);

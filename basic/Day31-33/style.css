@@ -31,6 +31,9 @@
 	border-collapse:collapse;
 	border-bottom: solid 1px #a8bfde;
 }
+td [type='text'] {
+	width: 30px;
+}
 .head,
 .normal {
 	border-top: solid 1px #a8bfde;
