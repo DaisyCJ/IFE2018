@@ -37,6 +37,5 @@
 				types.push(ele[type]);
 			}
 		})
-		console.log(types);
 		return types.length;
 	}

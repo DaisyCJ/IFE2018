@@ -38,13 +38,12 @@
 			}
 			//添加每月销售
 			for(var e of items[i].sale) {
-				tr.push("<td><input type='text' value='" + e + "'></td>");
+				tr.push("<td>" + e + "</td>");
 			}
 			data += tr.join("") + "</tr>";
 		}
 		data += "</tbody></table>";
 		table.innerHTML = data;
-		addInputListen();
 	}
 
 	//获取表格的全部信息，返回列表（数组对象）
@@ -68,22 +67,44 @@
 		var data = [];
 		var tds = item.getElementsByTagName("td");
 		for(var j=0; j<tds.length; j++) {
-			data.push(Number(tds[j].firstChild.value));
+			data.push(Number(tds[j].textContent));
 		}
 		return data;
 	}
 
-	//给每个输入框添加监听事件
-	function addInputListen() {
-		var inputs = document.querySelectorAll("td input");
-		inputs.forEach((ele) => {
-			ele.onblur = function() {
-				console.log('inputchange');
-				if(isNaN(ele.value)) {
-					alert("请正确输入");
+	table.onclick = function(e) {
+		var target = e.target;
+		if(target.nodeName.toLowerCase() == "td" && target.parentNode.getAttribute("class")=="normal") {
+			var string = "<input type='text' value='" + e.target.innerHTML + "'>" +
+			"<button class='setting' onclick='changeDate(this.previousSibling)'>✔</button>"+
+			"<button class='setting' onclick='cancel(this.parentNode.firstChild)'>✘</button>";
+			target.innerHTML = string;
+			target.firstChild.focus();
+			target.firstChild.select();
+			target.firstChild.onkeyup = function(e) {
+				if(e.keyCode == 13) {
+					changeData(e.target);
+				}
+				else if (e.keyCode == 27) {
+					cancel(e.target);
 				}
 			}
-		});
+			target.firstChild.onblur = function(e) {
+				changeData(e.target);
+			};
+		}
+	}
+	function changeData(node) {
+		var value = node.value;
+		if(isNaN(value)) {
+			alert("请正确输入");
+		} else {
+			node.parentNode.innerHTML = value;
+		}
+	}
+	function cancel(node) {
+		var value = node.value;
+		node.parentNode.innerHTML = value;
 	}
 	//给鼠标选中行添加事件
 	table.onmouseover = function(e) {
@@ -100,6 +121,7 @@
 			for(var i=0; i<tds.length; i++) {
 			 	tds[i].setAttribute("class", "focus-tr");
 			}
+			e.target.setAttribute("class", "focus-tr focus-td");
 			//更新图表
 			lineChart.clearLine();
 			lineChart.initData([getYearData(e.target.parentNode)]);
