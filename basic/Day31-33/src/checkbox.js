@@ -1,15 +1,6 @@
  	function genCheckBox(select, items) {
 		select.innerHTML += "<label for='" +select.id+ "all'>全部</label>"+
 		"<input type='checkbox' style='visibility: hidden' checkbox-type='all' value='all' id='" +select.id+ "all'>";
-		// for(var e of items) {
-		// 	var item = document.createElement("input");
-		// 	var text = document.createTextNode(e.text);
-		// 	item.value = e.value;
-		// 	item.setAttribute("checkbox-type", "item");
-		// 	item.setAttribute("type", "checkbox");
-		// 	select.appendChild(item);
-		// 	select.appendChild(text);
-		// }
 		for(var i=0; i<items.length; i++) {
 			var checkbox = document.createElement("input");
 		 	var text = document.createElement("label");
@@ -45,6 +36,11 @@
 						checkboxs[i].previousSibling.setAttribute("class", "not-choose");
 					}
 				}
+				//每次更改条件保存hash
+				//location.hash = getCondition();
+				var conditions = getCondition();
+				history.pushState({condition:conditions}, "");
+				console.log(history.state.condition);
 				updateTable(filterItems());
 			}
 		}
